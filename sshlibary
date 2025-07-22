@@ -1,0 +1,30 @@
+import time
+from SSHLibrary import SSHLibrary
+
+
+
+
+class  S_conn():
+    def __init__(self,ip,port,user,pwd,prompt):
+        self.ssh = SSHLibrary()
+        self.conn = self.ssh.open_connection(ip,port=port,prompt=prompt,timeout=300)
+        try:
+            self.ssh.login(user,pwd)
+        except Exception as e:
+            print("exception")
+            print(str(e))
+            self.conn = None
+    
+    def exec_command(self,cmd):
+        unused = self.ssh.read()
+        self.ssh.write(cmd)
+        out = self.ssh.read_until_prompt()
+        return out
+    def if_conn_dead(self):
+        return self.conn is None
+
+
+if __name__ == "__main__":
+    s = S_conn("10.66.10.131",22,"admin","admin","cats:")
+    pwd = s.exec_command("pwd")
+    print(pwd)
